@@ -153,3 +153,5 @@ Deno.test({
     assertEquals(resultFalse, false);
   },
 });
+
+Deno.runTests()
