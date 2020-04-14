@@ -154,4 +154,4 @@ Deno.test({
   },
 });
 
-Deno.runTests()
+Deno.runTests();

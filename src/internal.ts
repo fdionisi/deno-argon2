@@ -1,9 +1,4 @@
-import { encode, decode } from "https://deno.land/std/encoding/utf8.ts";
-
-import {
-  prepare,
-  PreprareOptions,
-} from "https://deno.land/x/plugin_prepare@v0.3.1/mod.ts";
+import { encode, decode, prepare, PreprareOptions } from "./deps.ts";
 
 import { MIN_SALT_SIZE, HashOptions } from "./common.ts";
 import { Argon2ErrorType, Argon2Error } from "./error.ts";
@@ -57,6 +52,13 @@ export async function installPlugin(
       options: Partial<HashOptions> = {},
     ) {
       let plugin = await preparing;
+
+      if (typeof password !== "string") {
+        throw new Argon2Error(
+          Argon2ErrorType.InvalidInput,
+          "Password argument must be a string.",
+        );
+      }
 
       let salt = options.salt
         ? options.salt

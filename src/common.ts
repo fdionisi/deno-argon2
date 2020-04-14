@@ -27,3 +27,7 @@ export interface HashOptions<T extends {} = {}> {
   threadMode: ThreadMode;
   lanes: number;
 }
+
+export function version() {
+  return "0.3.0";
+}

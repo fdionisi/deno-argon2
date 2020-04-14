@@ -1,7 +1,18 @@
 # Argon2 for Deno
 
 [Argon2](https://github.com/P-H-C/phc-winner-argon2) encryption library for [Deno](https://deno.land).
+
 It uses [rust-argon2](https://github.com/sru-systems/rust-argon2) under the hood.
+
+## API
+
+- `hash(password: string, options?: HashOptions): Promise<string>`
+
+- `verify(hash: string, password: string): Promise<boolean>`
+
+### Error handling
+
+In case of error, all methods of this library will throw an [`Argon2Error`](src/error.ts) type.
 
 ## Usage
 ```ts
@@ -13,15 +24,27 @@ let hash = await hash("test");
 assert(await verify(hash, "test"));
 ```
 
-## API
+### CLI
 
-- `hash(password: string, options: HashOptions): Promise<string>`
+It is possible to install deno-argon2 as a CLI tool insatiable via `deno install`.
 
-- `verify(hash: string, password: string): Promise<boolean>`
+<details>
 
-### Error handling
+  <summary>Installation snippet</summary>
 
-In case of error, all methods of this library will throw an [`Argon2Error`](src/error.ts) type.
+  ```sh
+  deno install \
+    --allow-env \
+    --allow-run \
+    --allow-read \
+    --allow-write \
+    --allow-plugin \
+    --allow-net \
+    argon2 https://deno.land/x/argon2/cli/mod.ts
+  ```
+</details>
+
+After install run `--help` to inspect all possible commands.
 
 ## Permissions
 
@@ -33,6 +56,7 @@ This library automatically download the static library and initialize Deno plugi
   deno \
     --allow-read .deno_plugins \
     --allow-write .deno_plugins \
+    --allow-net
     --allow-plugin \
     src/mod.ts
   ```
