@@ -1,6 +1,5 @@
-import { encode } from "https://deno.land/std/encoding/utf8.ts";
-
-import { hash, Variant, Version, ThreadMode } from "../src/dev.ts";
+import { hash, Variant, Version, ThreadMode } from "../lib/dev.ts";
+import { encode } from "../lib/deps.ts";
 
 let salt = crypto.getRandomValues(
   new Uint8Array(Math.max(8, Math.random() * 32)),

@@ -11,9 +11,11 @@ interface InstallPluginConfig {
 
 export async function buildNativePlugin(forRelease = false) {
   let cmd = ["cargo", "build"];
+
   if (forRelease) {
     cmd.push("--release");
   }
+
   let buildNativePlugin = Deno.run({
     cmd,
     stdout: "piped",
@@ -27,6 +29,7 @@ export async function installPlugin(
   config: Partial<InstallPluginConfig> = {},
 ) {
   let shouldBuild = "buildPlugin" in config;
+
   await checkPermissions(shouldBuild);
 
   if (shouldBuild) {

@@ -85,7 +85,7 @@ jobs:
 
       - name: Test TypeScript
         if: matrix.kind == 'test'
-        run: deno --allow-read --allow-write --allow-plugin --allow-run tests/deno.test.ts
+        run: deno --allow-read --allow-write --allow-plugin --allow-run tests/run.ts
 
       - name: Release
         uses: softprops/action-gh-release@v1

@@ -12,16 +12,32 @@ It uses [rust-argon2](https://github.com/sru-systems/rust-argon2) under the hood
 
 ### Error handling
 
-In case of error, all methods of this library will throw an [`Argon2Error`](src/error.ts) type.
+In case of error, all methods of this library will throw an [`Argon2Error`](lib/error.ts) type.
 
 ## Usage
+
+### Library
+
 ```ts
 import { assert } from "https://deno.land/std/testing/asserts.ts";
-import { hash, verify } from "https://deno.land/x/argon2/mod.ts"
+import { hash, verify } from "https://deno.land/x/argon2/lib/mod.ts";
 
 let hash = await hash("test");
 
 assert(await verify(hash, "test"));
+```
+
+#### Testing
+
+```ts
+import { Variant } from "https://deno.land/x/argon2/lib/mod.ts";
+import { assertArgon2Encoded } from "https://deno.land/x/argon2/lib/testing.ts";
+
+Deno.test("User#password should be an argon2id variant password", async () => {
+  assertArgon2Encoded(user.password, {
+    variant: Variant.Argon2id
+  });
+});
 ```
 
 ### CLI
@@ -58,7 +74,7 @@ This library automatically download the static library and initialize Deno plugi
     --allow-write .deno_plugins \
     --allow-net
     --allow-plugin \
-    src/mod.ts
+    lib/mod.ts
   ```
 </details>
 
@@ -68,15 +84,23 @@ In the `examples/` folder there you can find some usage examples.
 
 > To run examples you must `--allow-run` since dev environment builds and initialize the Rust crate.
 
+***Available examples***
+
+- [Hash](examples/hash.ts)
+- [Hash with options](examples/hash-with-options.ts)
+- [Verify](examples/hash-with-options.ts)
+
 ## Contributing
 
 ### Project structure
-```
-src/
-native/
-tests/
-benches/
-examples/
+```sh
+deno-argon2
+  ├── lib/      # Core library
+  ├── native/   # Native glue code
+  ├── cli/      # CLI wrapper
+  ├── tests/    # TypeScript tests
+  ├── benches/  # TypeScript benchmarks
+  └── examples/ # Development examples
 ```
 
 ## License

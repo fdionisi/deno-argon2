@@ -4,7 +4,7 @@ import {
   assertThrowsAsync,
 } from "https://deno.land/std/testing/asserts.ts";
 
-import { hash, verify, Variant, Version } from "../src/dev.ts";
+import { hash, verify, Variant, Version } from "../lib/dev.ts";
 
 let password =
   "2gnF!WAcyhp#kB@tcYQa2$A%P64jEmXY!@8n2GSH$GggfgGfP*qH!EWwDaB%5mdB6pW2fK!KD@YNjvqwREfRCCAPc54c5@Sk";
@@ -153,5 +153,3 @@ Deno.test({
     assertEquals(resultFalse, false);
   },
 });
-
-Deno.runTests();

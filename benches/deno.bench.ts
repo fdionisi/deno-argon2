@@ -1,7 +1,7 @@
 import { bench, runBenchmarks } from "https://deno.land/std/testing/bench.ts";
 
-import { ThreadMode } from "../src/common.ts";
-import { installPlugin } from "../src/internal.ts";
+import { ThreadMode } from "../lib/common.ts";
+import { installPlugin } from "../lib/internal.ts";
 
 let { verify, hash } = await installPlugin("file://target/release", {
   buildPlugin: "release",
