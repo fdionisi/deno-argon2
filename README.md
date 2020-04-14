@@ -42,7 +42,7 @@ Deno.test("User#password should be an argon2id variant password", async () => {
 
 ### CLI
 
-It is possible to install deno-argon2 as a CLI tool insatiable via `deno install`.
+The library can be installed as a CLI tool via `deno install`.
 
 <details>
 
@@ -64,7 +64,7 @@ After install run `--help` to inspect all possible commands.
 
 ## Permissions
 
-This library automatically download the static library and initialize Deno plugin via [plugin_prepare](https://github.com/manyuanrong/deno-plugin-prepare) and it requires `--allow-read .deno_plugins`, `--allow-write .deno_plugins` and `--allow-plugin` to be specified.
+The library automatically download the static library and initialize Deno plugin via [plugin_prepare](https://github.com/manyuanrong/deno-plugin-prepare) and it requires `--allow-read`, `--allow-write`, `--allow-net` and `--allow-plugin`.
 
 <details>
 
@@ -104,3 +104,5 @@ deno-argon2
 ```
 
 ## License
+
+[MIT](LICENSE)

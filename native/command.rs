@@ -19,6 +19,8 @@ pub struct HashOptions {
     lanes: Option<u32>,
     #[serde(rename(deserialize = "threadMode"))]
     thread_mode: Option<u8>,
+    #[serde(rename(deserialize = "hashLength"))]
+    hash_length: Option<u32>,
 }
 
 #[derive(Deserialize)]
@@ -106,6 +108,10 @@ fn hash_internal(data: &[u8]) -> Result<String, Error> {
 
     if let Some(lanes) = params.options.lanes {
         config.lanes = lanes;
+    }
+
+    if let Some(hash_length) = params.options.hash_length {
+        config.hash_length = hash_length;
     }
 
     if let Some(thread_mode) = params.options.thread_mode {

@@ -26,6 +26,7 @@ export interface HashOptions<T extends {} = {}> {
   timeCost: number;
   threadMode: ThreadMode;
   lanes: number;
+  hashLength: number;
 }
 
 export function version() {
