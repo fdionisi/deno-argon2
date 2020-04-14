@@ -12,6 +12,7 @@ export let hash = new Command()
   .option("-T, --thread-mode <arg:thread-mode>", "")
   .option("-v, --variant <arg:variant>", "")
   .option("-d, --data <arg:json>", "")
+  .option("-H, --hash-length <arg:number>", "")
   .type("thread-mode", (option, _, value) => {
     switch (value) {
       case "sequential": {
@@ -66,5 +67,6 @@ export let hash = new Command()
       threadMode: "threadMode" in options ? options.threadMode : undefined,
       variant: options.variant ? options.variant : undefined,
       data: options.data ? options.data : undefined,
+      hashLength: options.hashLength ? options.hashLength : undefined,
     }));
   });
