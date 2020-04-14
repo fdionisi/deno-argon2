@@ -1,6 +1,7 @@
 # Argon2 for Deno
 
 [Argon2](https://github.com/P-H-C/phc-winner-argon2) encryption library for [Deno](https://deno.land).
+It uses [rust-argon2](https://github.com/sru-systems/rust-argon2) under the hood.
 
 ## Usage
 ```ts
