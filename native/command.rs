@@ -1,6 +1,7 @@
 use argon2::{hash_encoded, verify_encoded, Config, ThreadMode, Variant, Version};
 use bytes::Bytes;
-use deno_core::{Buf, CoreOp, ZeroCopyBuf};
+use deno_core::{Buf, Op, ZeroCopyBuf};
+use deno_core::plugin_api::Interface;
 
 use crate::error::Error;
 
@@ -35,30 +36,30 @@ struct VerifyParams {
     hash: String,
 }
 
-pub fn hash(data: &[u8], buf: Option<ZeroCopyBuf>) -> CoreOp {
+pub fn hash(_interface: &mut dyn Interface, data: &[u8], buf: Option<ZeroCopyBuf>) -> Op {
     let mut buf = buf.unwrap();
     match hash_internal(data) {
         Ok(result) => {
             buf[0] = 1;
-            CoreOp::Sync(Buf::from(result.as_bytes()))
+            Op::Sync(Buf::from(result.as_bytes()))
         }
         Err(err) => {
             error_handler(err, &mut buf);
-            CoreOp::Sync(Buf::default())
+            Op::Sync(Buf::default())
         }
     }
 }
 
-pub fn verify(data: &[u8], buf: Option<ZeroCopyBuf>) -> CoreOp {
+pub fn verify(_interface: &mut dyn Interface, data: &[u8], buf: Option<ZeroCopyBuf>) -> Op {
     let mut buf = buf.unwrap();
     match verify_internal(data) {
         Ok(result) => {
             buf[0] = 1;
-            CoreOp::Sync(Buf::from(vec![result as u8]))
+            Op::Sync(Buf::from(vec![result as u8]))
         }
         Err(err) => {
             error_handler(err, &mut buf);
-            CoreOp::Sync(Buf::default())
+            Op::Sync(Buf::default())
         }
     }
 }

@@ -1,6 +1,6 @@
-export { encode, decode } from "https://deno.land/std/encoding/utf8.ts";
+export { encode, decode } from "https://deno.land/std@0.51.0/encoding/utf8.ts";
 
 export {
   prepare,
-  PreprareOptions,
-} from "https://deno.land/x/plugin_prepare@v0.3.1/mod.ts";
+  PerpareOptions,
+} from "https://deno.land/x/plugin_prepare@v0.6.0/mod.ts";

@@ -1,4 +1,4 @@
-import { encode, decode, prepare, PreprareOptions } from "./deps.ts";
+import { encode, decode, prepare, PerpareOptions } from "./deps.ts";
 
 import { MIN_SALT_SIZE, HashOptions } from "./common.ts";
 import { Argon2ErrorType, Argon2Error } from "./error.ts";
@@ -36,13 +36,13 @@ export async function installPlugin(
     await buildNativePlugin(config.buildPlugin === "release");
   }
 
-  let pluginOptions: PreprareOptions = {
+  let pluginOptions: PerpareOptions = {
     name: "argon2",
     printLog: config.printLog,
     checkCache: config.checkCache,
     urls: {
-      mac: `${baseUrl}/libdeno_argon2.dylib`,
-      win: `${baseUrl}/deno_argon2.dll`,
+      darwin: `${baseUrl}/libdeno_argon2.dylib`,
+      windows: `${baseUrl}/deno_argon2.dll`,
       linux: `${baseUrl}/libdeno_argon2.so`,
     },
   };
@@ -54,7 +54,10 @@ export async function installPlugin(
       password: string,
       options: Partial<HashOptions> = {},
     ) {
-      let plugin = await preparing;
+      await preparing;
+
+      //@ts-ignore
+      const { hash } = Deno.core.ops();
 
       if (typeof password !== "string") {
         throw new Argon2Error(
@@ -91,7 +94,8 @@ export async function installPlugin(
       }));
 
       let buf = new Uint8Array(1);
-      let result = plugin.ops.hash.dispatch(args, buf)!;
+      //@ts-ignore
+      let result = Deno.core.dispatch(hash, args, buf)!;
 
       if (buf[0] !== 1) {
         throw new Argon2Error(
@@ -107,11 +111,16 @@ export async function installPlugin(
       hash: string,
       password: string,
     ) {
-      let plugin = await preparing;
+      await preparing;
+
+      //@ts-ignore
+      const { verify } = Deno.core.ops();
+
       let args = encode(JSON.stringify({ password, hash }));
 
       let buf = new Uint8Array(100);
-      let result = plugin.ops.verify.dispatch(args, buf)!;
+      //@ts-ignore
+      let result = Deno.core.dispatch(verify, args, buf)!;
 
       if (buf[0] !== 1) {
         throw new Argon2Error(
