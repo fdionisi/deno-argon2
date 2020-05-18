@@ -56,6 +56,7 @@ The library can be installed as a CLI tool via `deno install`.
     --allow-write \
     --allow-plugin \
     --allow-net \
+    --unstable \
     argon2 https://deno.land/x/argon2/cli/mod.ts
   ```
 </details>
@@ -72,8 +73,9 @@ The library automatically download the static library and initialize Deno plugin
   deno \
     --allow-read .deno_plugins \
     --allow-write .deno_plugins \
-    --allow-net
+    --allow-net \
     --allow-plugin \
+    --unstable \
     lib/mod.ts
   ```
 </details>

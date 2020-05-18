@@ -1,6 +1,6 @@
 use argon2::{hash_encoded, verify_encoded, Config, ThreadMode, Variant, Version};
 use bytes::Bytes;
-use deno_core::{Buf, Op, ZeroCopyBuf, plugin_api::Interface};
+use deno_core::{plugin_api::Interface, Buf, Op, ZeroCopyBuf};
 
 use crate::error::Error;
 

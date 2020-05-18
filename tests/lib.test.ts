@@ -2,7 +2,7 @@ import {
   assert,
   assertEquals,
   assertThrowsAsync,
-} from "https://deno.land/std/testing/asserts.ts";
+} from "https://deno.land/std@v0.51.0/testing/asserts.ts";
 
 import { hash, verify, Variant, Version } from "../lib/dev.ts";
 
