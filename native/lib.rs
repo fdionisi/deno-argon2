@@ -1,16 +1,13 @@
 #[macro_use]
-extern crate deno_core;
-#[macro_use]
 extern crate serde;
 
 mod command;
 mod error;
 
-use deno_core::PluginInitContext;
+use deno_core::plugin_api::Interface;
 
-init_fn!(init);
-
-fn init(context: &mut dyn PluginInitContext) {
-    context.register_op("hash", Box::new(command::hash));
-    context.register_op("verify", Box::new(command::verify));
+#[no_mangle]
+fn deno_plugin_init(context: &mut dyn Interface) {
+    context.register_op("hash", command::hash);
+    context.register_op("verify", command::verify);
 }

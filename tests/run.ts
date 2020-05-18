@@ -1,4 +1,5 @@
-import "./lib.test.ts";
-import "./testing.test.ts";
+import "./lib.test.ts"
+import "./testing.test.ts"
 
-Deno.runTests();
+// @ts-ignore
+Deno[Deno.internal].runTests()

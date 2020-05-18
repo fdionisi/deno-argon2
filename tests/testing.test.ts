@@ -1,4 +1,4 @@
-import { assertThrows } from "https://deno.land/std/testing/asserts.ts";
+import { assertThrows } from "https://deno.land/std@v0.51.0/testing/asserts.ts";
 
 import { decode } from "../lib/deps.ts";
 import { hash, Variant } from "../lib/dev.ts";

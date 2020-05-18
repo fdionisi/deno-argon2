@@ -30,7 +30,7 @@ jobs:
       - name: Install Deno
         uses: denolib/setup-deno@master
         with:
-          deno-version: "0.40.0"
+          deno-version: "1.0.0"
 
       - name: Environment (common)
         run: |
@@ -85,7 +85,7 @@ jobs:
 
       - name: Test TypeScript
         if: matrix.kind == 'test'
-        run: deno --allow-read --allow-write --allow-plugin --allow-run tests/run.ts
+        run: deno run --allow-read --allow-write --allow-plugin --allow-run --unstable tests/run.ts
 
       - name: Release
         uses: softprops/action-gh-release@v1
