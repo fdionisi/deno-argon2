@@ -58,15 +58,17 @@ export let hash = new Command()
   .action(async (options) => {
     let password = await readStdin();
 
-    console.log(await argon2.hash(password, {
-      salt: options.salt ? encode(options.salt) : undefined,
-      secret: options.secret ? encode(options.secret) : undefined,
-      memoryCost: options.memoryCost ? options.memoryCost : undefined,
-      timeCost: options.timeCost ? options.timeCost : undefined,
-      lanes: options.lanes ? options.lanes : undefined,
-      threadMode: "threadMode" in options ? options.threadMode : undefined,
-      variant: options.variant ? options.variant : undefined,
-      data: options.data ? options.data : undefined,
-      hashLength: options.hashLength ? options.hashLength : undefined,
-    }));
+    console.log(
+      await argon2.hash(password, {
+        salt: options.salt ? encode(options.salt) : undefined,
+        secret: options.secret ? encode(options.secret) : undefined,
+        memoryCost: options.memoryCost ? options.memoryCost : undefined,
+        timeCost: options.timeCost ? options.timeCost : undefined,
+        lanes: options.lanes ? options.lanes : undefined,
+        threadMode: "threadMode" in options ? options.threadMode : undefined,
+        variant: options.variant ? options.variant : undefined,
+        data: options.data ? options.data : undefined,
+        hashLength: options.hashLength ? options.hashLength : undefined,
+      }),
+    );
   });

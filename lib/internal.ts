@@ -57,7 +57,7 @@ export async function installPlugin(
       await preparing;
 
       //@ts-ignore
-      const { hash } = Deno.core.ops();
+      let { argon2_hash } = Deno.core.ops();
 
       if (typeof password !== "string") {
         throw new Argon2Error(
@@ -66,13 +66,11 @@ export async function installPlugin(
         );
       }
 
-      let salt = options.salt
-        ? options.salt
-        : crypto.getRandomValues(
-          new Uint8Array(
-            Math.max(Math.round(Math.random() * 32), MIN_SALT_SIZE),
-          ),
-        );
+      let salt = options.salt ? options.salt : crypto.getRandomValues(
+        new Uint8Array(
+          Math.max(Math.round(Math.random() * 32), MIN_SALT_SIZE),
+        ),
+      );
 
       if (salt.length < MIN_SALT_SIZE) {
         throw new Argon2Error(
@@ -95,7 +93,7 @@ export async function installPlugin(
 
       let buf = new Uint8Array(1);
       //@ts-ignore
-      let result = Deno.core.dispatch(hash, args, buf)!;
+      let result = Deno.core.dispatch(argon2_hash, args, buf)!;
 
       if (buf[0] !== 1) {
         throw new Argon2Error(
@@ -114,13 +112,13 @@ export async function installPlugin(
       await preparing;
 
       //@ts-ignore
-      const { verify } = Deno.core.ops();
+      let { argon2_verify } = Deno.core.ops();
 
       let args = encode(JSON.stringify({ password, hash }));
 
       let buf = new Uint8Array(100);
       //@ts-ignore
-      let result = Deno.core.dispatch(verify, args, buf)!;
+      let result = Deno.core.dispatch(argon2_verify, args, buf)!;
 
       if (buf[0] !== 1) {
         throw new Argon2Error(

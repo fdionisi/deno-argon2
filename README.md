@@ -57,7 +57,7 @@ The library can be installed as a CLI tool via `deno install`.
     --allow-plugin \
     --allow-net \
     --unstable \
-    argon2 https://deno.land/x/argon2/cli/mod.ts
+    argon2 https://deno.land/x/argon2/cli/argon2
   ```
 </details>
 
