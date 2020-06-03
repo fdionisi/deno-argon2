@@ -85,7 +85,7 @@ jobs:
 
       - name: Test TypeScript
         if: matrix.kind == 'test'
-        run: RUST_BACKTRACE=1 deno run --allow-read --allow-write --allow-plugin --allow-run --unstable tests/run.ts
+        run: deno run --allow-read --allow-write --allow-plugin --allow-run --unstable tests/run.ts
 
       - name: Release
         uses: softprops/action-gh-release@v1
