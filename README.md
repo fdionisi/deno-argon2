@@ -4,6 +4,14 @@
 
 It uses [rust-argon2](https://github.com/sru-systems/rust-argon2) under the hood.
 
+## Compatibility table
+
+| Library version | Deno Version |
+|-----------------|--------------|
+| 0.6.0           | 1.0.0-1.0.3  |
+|-----------------|--------------|
+| 0.7.0           | 1.0.5        |
+
 ## API
 
 - `hash(password: string, options?: HashOptions): Promise<string>`
@@ -90,7 +98,7 @@ In the `examples/` folder there you can find some usage examples.
 
 - [Hash](examples/hash.ts)
 - [Hash with options](examples/hash-with-options.ts)
-- [Verify](examples/hash-with-options.ts)
+- [Verify](examples/verify.ts)
 
 ## Contributing
 

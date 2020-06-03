@@ -35,8 +35,8 @@ struct VerifyParams {
     hash: String,
 }
 
-pub fn hash(_interface: &mut dyn Interface, data: &[u8], buf: Option<ZeroCopyBuf>) -> Op {
-    let mut buf = buf.unwrap();
+pub fn hash(_interface: &mut dyn Interface, data: &[u8], buffs: &mut [ZeroCopyBuf]) -> Op {
+    let mut buf = buffs[0].clone();
     match hash_internal(data) {
         Ok(result) => {
             buf[0] = 1;
@@ -49,8 +49,8 @@ pub fn hash(_interface: &mut dyn Interface, data: &[u8], buf: Option<ZeroCopyBuf
     }
 }
 
-pub fn verify(_interface: &mut dyn Interface, data: &[u8], buf: Option<ZeroCopyBuf>) -> Op {
-    let mut buf = buf.unwrap();
+pub fn verify(_interface: &mut dyn Interface, data: &[u8], buffs: &mut [ZeroCopyBuf]) -> Op {
+    let mut buf = buffs[0].clone();
     match verify_internal(data) {
         Ok(result) => {
             buf[0] = 1;
