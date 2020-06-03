@@ -1,4 +1,4 @@
-import { encode, decode, prepare, PerpareOptions } from "./deps.ts";
+import { encode, decode, prepare } from "./deps.ts";
 
 import { MIN_SALT_SIZE, HashOptions } from "./common.ts";
 import { Argon2ErrorType, Argon2Error } from "./error.ts";
@@ -36,7 +36,7 @@ export async function installPlugin(
     await buildNativePlugin(config.buildPlugin === "release");
   }
 
-  let pluginOptions: PerpareOptions = {
+  let preparing = prepare({
     name: "argon2",
     printLog: config.printLog,
     checkCache: config.checkCache,
@@ -45,9 +45,7 @@ export async function installPlugin(
       windows: `${baseUrl}/deno_argon2.dll`,
       linux: `${baseUrl}/libdeno_argon2.so`,
     },
-  };
-
-  let preparing = prepare(pluginOptions);
+  });
 
   return {
     async hash(
