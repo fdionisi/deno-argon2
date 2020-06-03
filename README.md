@@ -9,7 +9,6 @@ It uses [rust-argon2](https://github.com/sru-systems/rust-argon2) under the hood
 | Library version | Deno Version |
 |-----------------|--------------|
 | 0.6.0           | 1.0.0-1.0.3  |
-|-----------------|--------------|
 | 0.7.0           | 1.0.5        |
 
 ## API
