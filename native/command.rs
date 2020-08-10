@@ -35,9 +35,10 @@ struct VerifyParams {
     hash: String,
 }
 
-pub fn hash(_interface: &mut dyn Interface, data: &[u8], buffs: &mut [ZeroCopyBuf]) -> Op {
-    let mut buf = buffs[0].clone();
-    match hash_internal(data) {
+pub fn hash(_interface: &mut dyn Interface, buffs: &mut [ZeroCopyBuf]) -> Op {
+    let data = buffs[0].clone();
+    let mut buf = buffs[1].clone();
+    match hash_internal(&data) {
         Ok(result) => {
             buf[0] = 1;
             Op::Sync(Buf::from(result.as_bytes()))
@@ -49,9 +50,10 @@ pub fn hash(_interface: &mut dyn Interface, data: &[u8], buffs: &mut [ZeroCopyBu
     }
 }
 
-pub fn verify(_interface: &mut dyn Interface, data: &[u8], buffs: &mut [ZeroCopyBuf]) -> Op {
-    let mut buf = buffs[0].clone();
-    match verify_internal(data) {
+pub fn verify(_interface: &mut dyn Interface, buffs: &mut [ZeroCopyBuf]) -> Op {
+    let data = buffs[0].clone();
+    let mut buf = buffs[1].clone();
+    match verify_internal(&data) {
         Ok(result) => {
             buf[0] = 1;
             Op::Sync(Buf::from(vec![result as u8]))
@@ -72,7 +74,7 @@ fn error_handler(err: Error, buf: &mut ZeroCopyBuf) {
     }
 }
 
-fn hash_internal(data: &[u8]) -> Result<String, Error> {
+fn hash_internal(data: &ZeroCopyBuf) -> Result<String, Error> {
     let params: HashParams = serde_json::from_slice(data)?;
     let salt = params.options.salt;
 
@@ -125,7 +127,7 @@ fn hash_internal(data: &[u8]) -> Result<String, Error> {
     Ok(hash_encoded(&params.password.into_bytes(), &salt, &config)?)
 }
 
-fn verify_internal(data: &[u8]) -> Result<bool, Error> {
+fn verify_internal(data: &ZeroCopyBuf) -> Result<bool, Error> {
     let options: VerifyParams = serde_json::from_slice(data)?;
 
     Ok(verify_encoded(

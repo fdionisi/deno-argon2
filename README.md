@@ -10,6 +10,7 @@ It uses [rust-argon2](https://github.com/sru-systems/rust-argon2) under the hood
 |-----------------|--------------|
 | 0.6.0           | 1.0.0-1.0.3  |
 | 0.7.0           | 1.0.5        |
+| 0.8.0           | 1.2.3        |
 
 ## API
 
@@ -57,14 +58,9 @@ The library can be installed as a CLI tool via `deno install`.
 
   ```sh
   deno install \
-    --allow-env \
-    --allow-run \
-    --allow-read \
-    --allow-write \
-    --allow-plugin \
-    --allow-net \
+    -A \
     --unstable \
-    argon2 https://deno.land/x/argon2/cli/argon2
+    argon2 https://deno.land/x/argon2/cli/argon2.ts
   ```
 </details>
 

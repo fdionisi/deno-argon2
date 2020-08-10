@@ -1,4 +1,4 @@
-import { bench, runBenchmarks } from "https://deno.land/std/testing/bench.ts";
+import { bench, runBenchmarks } from "https://deno.land/std@v0.64.0/testing/bench.ts";
 
 import { ThreadMode } from "../lib/common.ts";
 import { installPlugin } from "../lib/internal.ts";
