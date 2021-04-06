@@ -1,5 +1,7 @@
-import { Command, encode, argon2 } from "../deps.ts";
+import { argon2, Command } from "../deps.ts";
 import { readStdin } from "../util.ts";
+
+let encoder = new TextEncoder();
 
 export let hash = new Command()
   .version(argon2.version())
@@ -13,7 +15,10 @@ export let hash = new Command()
   .option("-v, --variant <arg:variant>", "")
   .option("-d, --data <arg:json>", "")
   .option("-H, --hash-length <arg:number>", "")
-  .type("thread-mode", (option, _, value) => {
+  .type("thread-mode", ({
+    name,
+    value,
+  }) => {
     switch (value) {
       case "sequential": {
         return argon2.ThreadMode.Sequential;
@@ -24,12 +29,15 @@ export let hash = new Command()
       case undefined: {}
       default: {
         throw new Error(
-          `Option --${option.name} must be either "sequential" or "parallel": ${value}`,
+          `Option --${name} must be either "sequential" or "parallel": ${value}`,
         );
       }
     }
   })
-  .type("variant", (option, _, value) => {
+  .type("variant", ({
+    name,
+    value,
+  }) => {
     switch (value) {
       case argon2.Variant.Argon2i:
       case argon2.Variant.Argon2d:
@@ -39,19 +47,22 @@ export let hash = new Command()
       case undefined: {}
       default: {
         throw new Error(
-          `Option --${option.name} must be either "${argon2.Variant.Argon2i}", "${argon2.Variant.Argon2d}" or "${argon2.Variant.Argon2id}": ${value}`,
+          `Option --${name} must be either "${argon2.Variant.Argon2i}", "${argon2.Variant.Argon2d}" or "${argon2.Variant.Argon2id}": ${value}`,
         );
       }
     }
   })
-  .type("json", (option, _, value) => {
+  .type("json", ({
+    name,
+    value,
+  }) => {
     try {
       if (value !== undefined) {
         return JSON.parse(value);
       }
     } catch (_) {
       throw new Error(
-        `Option --${option.name} must be a valid json object: ${value}`,
+        `Option --${name} must be a valid json object: ${value}`,
       );
     }
   })
@@ -60,8 +71,8 @@ export let hash = new Command()
 
     console.log(
       await argon2.hash(password, {
-        salt: options.salt ? encode(options.salt) : undefined,
-        secret: options.secret ? encode(options.secret) : undefined,
+        salt: options.salt ? encoder.encode(options.salt) : undefined,
+        secret: options.secret ? encoder.encode(options.secret) : undefined,
         memoryCost: options.memoryCost ? options.memoryCost : undefined,
         timeCost: options.timeCost ? options.timeCost : undefined,
         lanes: options.lanes ? options.lanes : undefined,

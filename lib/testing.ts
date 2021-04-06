@@ -1,6 +1,6 @@
-import { assert } from "https://deno.land/std@v0.56.0/testing/asserts.ts";
+import { assert } from "https://deno.land/std@0.92.0/testing/asserts.ts";
 
-import { Version, Variant } from "./common.ts";
+import { Variant, Version } from "./common.ts";
 
 interface AssertArgon2EncodedOptions {
   variant: Variant;

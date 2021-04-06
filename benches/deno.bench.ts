@@ -1,4 +1,7 @@
-import { bench, runBenchmarks } from "https://deno.land/std@v0.64.0/testing/bench.ts";
+import {
+  bench,
+  runBenchmarks,
+} from "https://deno.land/std@0.92.0/testing/bench.ts";
 
 import { ThreadMode } from "../lib/common.ts";
 import { installPlugin } from "../lib/internal.ts";
@@ -17,7 +20,7 @@ let hashed =
 bench({
   name: "hash 100 times",
   runs: 100,
-  async func(handler) {
+  async func(handler: any) {
     handler.start();
     await hash(
       password,
@@ -29,7 +32,7 @@ bench({
 bench({
   name: "hash 100 times with random salt",
   runs: 100,
-  async func(handler) {
+  async func(handler: any) {
     let salt = crypto.getRandomValues(
       new Uint8Array(Math.max(8, Math.random() * 32)),
     );
@@ -45,7 +48,7 @@ bench({
 bench({
   name: "hash 100 times with random data, secret and salt",
   runs: 100,
-  async func(handler) {
+  async func(handler: any) {
     let salt = crypto.getRandomValues(
       new Uint8Array(Math.max(8, Math.random() * 32)),
     );
@@ -71,7 +74,7 @@ bench({
 bench({
   name: "hash 100 times with memoryCost set at 1024",
   runs: 100,
-  async func(handler) {
+  async func(handler: any) {
     handler.start();
     await hash(
       password,
@@ -86,7 +89,7 @@ bench({
 bench({
   name: "hash 100 times with timeCost set at 10",
   runs: 100,
-  async func(handler) {
+  async func(handler: any) {
     handler.start();
     await hash(
       password,
@@ -101,7 +104,7 @@ bench({
 bench({
   name: "hash 100 times with 16 lanes on parallel mode",
   runs: 100,
-  async func(handler) {
+  async func(handler: any) {
     handler.start();
     await hash(
       password,
@@ -117,7 +120,7 @@ bench({
 bench({
   name: "hash 100 times with 16 lanes on sequential mode",
   runs: 100,
-  async func(handler) {
+  async func(handler: any) {
     handler.start();
     await hash(
       password,
@@ -133,7 +136,7 @@ bench({
 bench({
   name: "verify 100 times",
   runs: 100,
-  async func(handler) {
+  async func(handler: any) {
     handler.start();
     await verify(
       hashed,

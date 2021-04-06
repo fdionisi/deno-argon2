@@ -1,6 +1,6 @@
 use argon2::{hash_encoded, verify_encoded, Config, ThreadMode, Variant, Version};
 use bytes::Bytes;
-use deno_core::{plugin_api::Interface, Buf, Op, ZeroCopyBuf};
+use deno_core::{plugin_api::Interface, Op, ZeroCopyBuf};
 
 use crate::error::Error;
 
@@ -41,11 +41,11 @@ pub fn hash(_interface: &mut dyn Interface, buffs: &mut [ZeroCopyBuf]) -> Op {
     match hash_internal(&data) {
         Ok(result) => {
             buf[0] = 1;
-            Op::Sync(Buf::from(result.as_bytes()))
+            Op::Sync(result.into_bytes().into_boxed_slice())
         }
         Err(err) => {
             error_handler(err, &mut buf);
-            Op::Sync(Buf::default())
+            Op::Sync(Box::new([]))
         }
     }
 }
@@ -56,11 +56,11 @@ pub fn verify(_interface: &mut dyn Interface, buffs: &mut [ZeroCopyBuf]) -> Op {
     match verify_internal(&data) {
         Ok(result) => {
             buf[0] = 1;
-            Op::Sync(Buf::from(vec![result as u8]))
+            Op::Sync(Box::new([result as u8]))
         }
         Err(err) => {
             error_handler(err, &mut buf);
-            Op::Sync(Buf::default())
+            Op::Sync(Box::new([]))
         }
     }
 }

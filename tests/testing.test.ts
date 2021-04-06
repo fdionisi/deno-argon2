@@ -1,6 +1,5 @@
-import { assertThrows } from "https://deno.land/std@v0.64.0/testing/asserts.ts";
+import { assertThrows } from "https://deno.land/std@0.92.0/testing/asserts.ts";
 
-import { decode } from "../lib/deps.ts";
 import { hash, Variant } from "../lib/dev.ts";
 import { assertArgon2Encoded } from "../lib/testing.ts";
 
@@ -70,10 +69,13 @@ Deno.test({
   name: "assertion testing failure with non argon2 alike strings",
   fn() {
     let start = Date.now();
+    let decoder = new TextDecoder();
     while (Date.now() - start < 1000) {
       assertThrows(() => {
         assertArgon2Encoded(
-          decode(crypto.getRandomValues(new Uint8Array(Math.random() * 100))),
+          decoder.decode(
+            crypto.getRandomValues(new Uint8Array(Math.random() * 100)),
+          ),
         );
       });
     }

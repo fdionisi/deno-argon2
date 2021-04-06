@@ -1,4 +1,4 @@
-import { Command, argon2 } from "./deps.ts";
+import { argon2, Command } from "./deps.ts";
 
 import { hash } from "./commands/hash.ts";
 import { verify } from "./commands/verify.ts";

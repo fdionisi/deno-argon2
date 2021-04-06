@@ -1,5 +1,5 @@
-import { decode } from "./deps.ts";
+let decoder = new TextDecoder();
 
 export async function readStdin() {
-  return decode(await Deno.readAll(Deno.stdin));
+  return decoder.decode(await Deno.readAll(Deno.stdin));
 }

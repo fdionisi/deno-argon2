@@ -1,7 +1,10 @@
-import { encode, decode, prepare } from "./deps.ts";
+import { prepare } from "./deps.ts";
 
-import { MIN_SALT_SIZE, HashOptions } from "./common.ts";
-import { Argon2ErrorType, Argon2Error } from "./error.ts";
+import { HashOptions, MIN_SALT_SIZE } from "./common.ts";
+import { Argon2Error, Argon2ErrorType } from "./error.ts";
+
+let encoder = new TextEncoder();
+let decoder = new TextDecoder();
 
 interface InstallPluginConfig {
   buildPlugin: "dev" | "release";
@@ -77,14 +80,14 @@ export async function installPlugin(
         );
       }
 
-      let args = encode(JSON.stringify({
+      let args = encoder.encode(JSON.stringify({
         password,
         options: {
           ...options,
           salt: [...salt.values()],
           secret: options.secret ? [...options.secret.values()] : undefined,
           data: options.data
-            ? [...encode(JSON.stringify(options.data)).values()]
+            ? [...encoder.encode(JSON.stringify(options.data)).values()]
             : undefined,
         },
       }));
@@ -101,7 +104,7 @@ export async function installPlugin(
         );
       }
 
-      return decode(result);
+      return decoder.decode(result);
     },
     async verify(
       hash: string,
@@ -112,7 +115,7 @@ export async function installPlugin(
       //@ts-ignore
       let { argon2_verify } = Deno.core.ops();
 
-      let args = encode(JSON.stringify({ password, hash }));
+      let args = encoder.encode(JSON.stringify({ password, hash }));
 
       let buf = new Uint8Array(100);
       //@ts-ignore
@@ -176,6 +179,6 @@ async function checkPermissions(shouldBuild: boolean) {
 
 function extractNativeError(buf: Uint8Array) {
   let errorBytes = buf.filter((byte) => byte !== 0);
-  let errorData = decode(errorBytes);
+  let errorData = decoder.decode(errorBytes);
   return errorData;
 }

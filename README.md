@@ -1,16 +1,19 @@
 # Argon2 for Deno
 
-[Argon2](https://github.com/P-H-C/phc-winner-argon2) encryption library for [Deno](https://deno.land).
+[Argon2](https://github.com/P-H-C/phc-winner-argon2) encryption library for
+[Deno](https://deno.land).
 
-It uses [rust-argon2](https://github.com/sru-systems/rust-argon2) under the hood.
+It uses [rust-argon2](https://github.com/sru-systems/rust-argon2) under the
+hood.
 
 ## Compatibility table
 
 | Library version | Deno Version |
-|-----------------|--------------|
+| --------------- | ------------ |
 | 0.6.0           | 1.0.0-1.0.3  |
 | 0.7.0           | 1.0.5        |
 | 0.8.0           | 1.2.3        |
+| 0.9.0           | 1.8.3        |
 
 ## API
 
@@ -20,7 +23,8 @@ It uses [rust-argon2](https://github.com/sru-systems/rust-argon2) under the hood
 
 ### Error handling
 
-In case of error, all methods of this library will throw an [`Argon2Error`](lib/error.ts) type.
+In case of error, all methods of this library will throw an
+[`Argon2Error`](lib/error.ts) type.
 
 ## Usage
 
@@ -43,7 +47,7 @@ import { assertArgon2Encoded } from "https://deno.land/x/argon2/lib/testing.ts";
 
 Deno.test("User#password should be an argon2id variant password", async () => {
   assertArgon2Encoded(user.password, {
-    variant: Variant.Argon2id
+    variant: Variant.Argon2id,
   });
 });
 ```
@@ -54,42 +58,47 @@ The library can be installed as a CLI tool via `deno install`.
 
 <details>
 
-  <summary>Installation snippet</summary>
+<summary>Installation snippet</summary>
 
-  ```sh
-  deno install \
-    -A \
-    --unstable \
-    argon2 https://deno.land/x/argon2/cli/argon2.ts
-  ```
+    ```sh
+    deno install \
+      -A \
+      --unstable \
+      argon2 https://deno.land/x/argon2/cli/argon2.ts
+    ```
+
 </details>
 
 After install run `--help` to inspect all possible commands.
 
 ## Permissions
 
-The library automatically download the static library and initialize Deno plugin via [plugin_prepare](https://github.com/manyuanrong/deno-plugin-prepare) and it requires `--allow-read`, `--allow-write`, `--allow-net` and `--allow-plugin`.
+The library automatically download the static library and initialize Deno plugin
+via [plugin_prepare](https://github.com/manyuanrong/deno-plugin-prepare) and it
+requires `--allow-read`, `--allow-write`, `--allow-net` and `--allow-plugin`.
 
 <details>
 
-  ```sh
-  deno \
-    --allow-read .deno_plugins \
-    --allow-write .deno_plugins \
-    --allow-net \
-    --allow-plugin \
-    --unstable \
-    lib/mod.ts
-  ```
+    ```sh
+    deno \
+      --allow-read .deno_plugins \
+      --allow-write .deno_plugins \
+      --allow-net \
+      --allow-plugin \
+      --unstable \
+      lib/mod.ts
+    ```
+
 </details>
 
 ## Examples
 
 In the `examples/` folder there you can find some usage examples.
 
-> To run examples you must `--allow-run` since dev environment builds and initialize the Rust crate.
+> To run examples you must `--allow-run` since dev environment builds and
+> initialize the Rust crate.
 
-***Available examples***
+_**Available examples**_
 
 - [Hash](examples/hash.ts)
 - [Hash with options](examples/hash-with-options.ts)
@@ -98,6 +107,7 @@ In the `examples/` folder there you can find some usage examples.
 ## Contributing
 
 ### Project structure
+
 ```sh
 deno-argon2
   ├── lib/      # Core library
