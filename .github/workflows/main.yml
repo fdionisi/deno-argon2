@@ -19,7 +19,7 @@ jobs:
       - name: Install Rust
         uses: hecrj/setup-rust-action@v1
         with:
-          rust-version: "1.42.0"
+          rust-version: "1.50.0"
 
       - name: Install clippy and rustfmt
         if: matrix.kind == 'lint'
@@ -30,13 +30,7 @@ jobs:
       - name: Install Deno
         uses: denolib/setup-deno@master
         with:
-          deno-version: "1.2.3"
-
-      - name: Environment (common)
-        run: |
-          echo ::set-env name=GH_ACTIONS::1
-          echo ::set-env name=DENO_BUILD_MODE::release
-          echo ::set-env name=RUST_BACKTRACE::full
+          deno-version: "1.8.3"
 
       - name: Log versions
         run: |
@@ -62,19 +56,6 @@ jobs:
           path: target
           key: ${{ matrix.kind }}-${{ runner.os }}-cargo-build-target-${{ hashFiles('**/Cargo.lock') }}
 
-      # Fix the problem that the second build of windows will fail
-      - name: Remove Some Cache
-        if: matrix.os == 'windows-2019'
-        run: |
-          rm target/release/gn_root -Recurse -ErrorAction Ignore
-          rm target/debug/gn_root -Recurse -ErrorAction Ignore
-
-      - name: Install python
-        uses: actions/setup-python@v1
-        with:
-          python-version: "2.7.x"
-          architecture: x64
-
       - name: Clippy
         if: matrix.kind == 'lint'
         run: cargo clippy --all-targets --release --locked -- -D clippy::all
@@ -85,7 +66,7 @@ jobs:
 
       - name: Test TypeScript
         if: matrix.kind == 'test'
-        run: deno run --allow-read --allow-write --allow-plugin --allow-run --unstable tests/run.ts
+        run: deno run --allow-read --allow-write --allow-plugin --allow-run --allow-env --unstable tests/run.ts
 
       - name: Release
         uses: softprops/action-gh-release@v1
