@@ -1,13 +1,14 @@
-#[macro_use]
-extern crate serde;
-
 mod command;
 mod error;
 
-use deno_core::plugin_api::Interface;
+use deno_core::{op_sync, Extension};
 
 #[no_mangle]
-fn deno_plugin_init(context: &mut dyn Interface) {
-    context.register_op("argon2_hash", command::hash);
-    context.register_op("argon2_verify", command::verify);
+pub fn init() -> Extension {
+    Extension::builder()
+        .ops(vec![
+            ("op_argon2_hash", op_sync(command::hash)),
+            ("op_argon2_verify", op_sync(command::verify)),
+        ])
+        .build()
 }

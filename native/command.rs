@@ -1,14 +1,14 @@
 use argon2::{hash_encoded, verify_encoded, Config, ThreadMode, Variant, Version};
-use bytes::Bytes;
-use deno_core::{plugin_api::Interface, Op, ZeroCopyBuf};
+use deno_core::{error::AnyError, OpState, ZeroCopyBuf};
+use serde::Deserialize;
 
 use crate::error::Error;
 
 #[derive(Deserialize)]
-pub struct HashOptions {
-    salt: Bytes,
-    secret: Option<Bytes>,
-    data: Option<Bytes>,
+struct HashOptions {
+    salt: ZeroCopyBuf,
+    secret: Option<ZeroCopyBuf>,
+    data: Option<ZeroCopyBuf>,
     version: Option<String>,
     variant: Option<String>,
     #[serde(rename(deserialize = "memoryCost"))]
@@ -24,59 +24,27 @@ pub struct HashOptions {
 }
 
 #[derive(Deserialize)]
-struct HashParams {
+pub struct HashParams {
     password: String,
     options: HashOptions,
 }
 
 #[derive(Deserialize)]
-struct VerifyParams {
+pub struct VerifyParams {
     password: String,
     hash: String,
 }
 
-pub fn hash(_interface: &mut dyn Interface, buffs: &mut [ZeroCopyBuf]) -> Op {
-    let data = buffs[0].clone();
-    let mut buf = buffs[1].clone();
-    match hash_internal(&data) {
-        Ok(result) => {
-            buf[0] = 1;
-            Op::Sync(result.into_bytes().into_boxed_slice())
-        }
-        Err(err) => {
-            error_handler(err, &mut buf);
-            Op::Sync(Box::new([]))
-        }
-    }
+pub fn hash(_state: &mut OpState, params: HashParams, _: ()) -> Result<String, AnyError> {
+    Ok(hash_internal(&params)?)
 }
 
-pub fn verify(_interface: &mut dyn Interface, buffs: &mut [ZeroCopyBuf]) -> Op {
-    let data = buffs[0].clone();
-    let mut buf = buffs[1].clone();
-    match verify_internal(&data) {
-        Ok(result) => {
-            buf[0] = 1;
-            Op::Sync(Box::new([result as u8]))
-        }
-        Err(err) => {
-            error_handler(err, &mut buf);
-            Op::Sync(Box::new([]))
-        }
-    }
+pub fn verify(_state: &mut OpState, params: VerifyParams, _: ()) -> Result<bool, AnyError> {
+    Ok(verify_internal(&params)?)
 }
 
-fn error_handler(err: Error, buf: &mut ZeroCopyBuf) {
-    buf[0] = 0;
-    let e = format!("{}", err);
-    let e = e.as_bytes();
-    for (index, byte) in e.iter().enumerate() {
-        buf[index + 1] = *byte;
-    }
-}
-
-fn hash_internal(data: &ZeroCopyBuf) -> Result<String, Error> {
-    let params: HashParams = serde_json::from_slice(data)?;
-    let salt = params.options.salt;
+fn hash_internal(params: &HashParams) -> Result<String, Error> {
+    let salt = &params.options.salt;
 
     let mut config: Config = Config::default();
 
@@ -96,13 +64,13 @@ fn hash_internal(data: &ZeroCopyBuf) -> Result<String, Error> {
         config.time_cost = time_cost;
     }
 
-    if let Some(variant) = params.options.variant {
+    if let Some(variant) = &params.options.variant {
         if let Ok(v) = Variant::from_str(&variant) {
             config.variant = v;
         }
     }
 
-    if let Some(version) = params.options.version {
+    if let Some(version) = &params.options.version {
         if let Ok(v) = Version::from_str(&version) {
             config.version = v;
         }
@@ -124,14 +92,16 @@ fn hash_internal(data: &ZeroCopyBuf) -> Result<String, Error> {
         }
     }
 
-    Ok(hash_encoded(&params.password.into_bytes(), &salt, &config)?)
+    Ok(hash_encoded(
+        &params.password.to_owned().into_bytes(),
+        &salt,
+        &config,
+    )?)
 }
 
-fn verify_internal(data: &ZeroCopyBuf) -> Result<bool, Error> {
-    let options: VerifyParams = serde_json::from_slice(data)?;
-
+fn verify_internal(params: &VerifyParams) -> Result<bool, Error> {
     Ok(verify_encoded(
-        &options.hash,
-        &options.password.into_bytes(),
+        &params.hash,
+        &params.password.to_owned().into_bytes(),
     )?)
 }

@@ -4,7 +4,6 @@ import { HashOptions, MIN_SALT_SIZE } from "./common.ts";
 import { Argon2Error, Argon2ErrorType } from "./error.ts";
 
 let encoder = new TextEncoder();
-let decoder = new TextDecoder();
 
 interface InstallPluginConfig {
   buildPlugin: "dev" | "release";
@@ -57,9 +56,6 @@ export async function installPlugin(
     ) {
       await preparing;
 
-      //@ts-ignore
-      let { argon2_hash } = Deno.core.ops();
-
       if (typeof password !== "string") {
         throw new Argon2Error(
           Argon2ErrorType.InvalidInput,
@@ -80,31 +76,27 @@ export async function installPlugin(
         );
       }
 
-      let args = encoder.encode(JSON.stringify({
-        password,
-        options: {
-          ...options,
-          salt: [...salt.values()],
-          secret: options.secret ? [...options.secret.values()] : undefined,
-          data: options.data
-            ? [...encoder.encode(JSON.stringify(options.data)).values()]
-            : undefined,
-        },
-      }));
-
-      let buf = new Uint8Array(1);
-      //@ts-ignore
-      let result = Deno.core.dispatch(argon2_hash, args, buf)!;
-
-      if (buf[0] !== 1) {
+      try {
+        // @ts-ignore
+        return Deno.core.opSync("op_argon2_hash", {
+          password,
+          options: {
+            ...options,
+            salt: [...salt.values()],
+            secret: options.secret ? [...options.secret.values()] : undefined,
+            data: options.data
+              ? [...encoder.encode(JSON.stringify(options.data)).values()]
+              : undefined,
+          },
+        })!;
+      } catch (error) {
+        console.log(error);
         throw new Argon2Error(
           Argon2ErrorType.Native,
           "An error occurred executing `hash`",
-          extractNativeError(buf),
+          error,
         );
       }
-
-      return decoder.decode(result);
     },
     async verify(
       hash: string,
@@ -112,24 +104,16 @@ export async function installPlugin(
     ) {
       await preparing;
 
-      //@ts-ignore
-      let { argon2_verify } = Deno.core.ops();
-
-      let args = encoder.encode(JSON.stringify({ password, hash }));
-
-      let buf = new Uint8Array(100);
-      //@ts-ignore
-      let result = Deno.core.dispatch(argon2_verify, args, buf)!;
-
-      if (buf[0] !== 1) {
+      try {
+        // @ts-ignore
+        return Deno.core.opSync("op_argon2_verify", { password, hash })!;
+      } catch (error) {
         throw new Argon2Error(
           Argon2ErrorType.Native,
           "An error occurred executing `verify`",
-          extractNativeError(buf),
+          error,
         );
       }
-
-      return Boolean(result[0]);
     },
   };
 }
@@ -175,10 +159,4 @@ async function checkPermissions(shouldBuild: boolean) {
       "Run permission is not set. Run the script with `--allow-run` flag.",
     );
   }
-}
-
-function extractNativeError(buf: Uint8Array) {
-  let errorBytes = buf.filter((byte) => byte !== 0);
-  let errorData = decoder.decode(errorBytes);
-  return errorData;
 }
