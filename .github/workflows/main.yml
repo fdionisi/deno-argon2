@@ -19,7 +19,7 @@ jobs:
       - name: Install Rust
         uses: hecrj/setup-rust-action@v1
         with:
-          rust-version: "1.50.0"
+          rust-version: "1.51.0"
 
       - name: Install clippy and rustfmt
         if: matrix.kind == 'lint'
@@ -30,7 +30,7 @@ jobs:
       - name: Install Deno
         uses: denolib/setup-deno@master
         with:
-          deno-version: "1.8.3"
+          deno-version: "1.10.1"
 
       - name: Log versions
         run: |
