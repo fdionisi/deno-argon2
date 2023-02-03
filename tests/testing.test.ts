@@ -1,6 +1,6 @@
 import { assertThrows } from "https://deno.land/std@0.92.0/testing/asserts.ts";
 
-import { hash, Variant } from "../lib/dev.ts";
+import { hash, Variant } from "../lib/mod.ts";
 import { assertArgon2Encoded } from "../lib/testing.ts";
 
 let password =
