@@ -1,11 +1,10 @@
 use argon2::{hash_encoded, verify_encoded, Config, ThreadMode, Variant, Version};
 use bytes::Bytes;
-use deno_core::{plugin_api::Interface, Op, ZeroCopyBuf};
 
 use crate::error::Error;
 
 #[derive(Deserialize)]
-pub struct HashOptions {
+struct HashOptions {
     salt: Bytes,
     secret: Option<Bytes>,
     data: Option<Bytes>,
@@ -29,54 +28,96 @@ struct HashParams {
     options: HashOptions,
 }
 
+#[derive(Serialize)]
+struct HashResult {
+    result: Vec<u8>,
+    error: Option<String>,
+}
+
 #[derive(Deserialize)]
 struct VerifyParams {
     password: String,
     hash: String,
 }
 
-pub fn hash(_interface: &mut dyn Interface, buffs: &mut [ZeroCopyBuf]) -> Op {
-    let data = buffs[0].clone();
-    let mut buf = buffs[1].clone();
-    match hash_internal(&data) {
+#[derive(Serialize)]
+struct VerifyResult {
+    result: bool,
+    error: Option<String>,
+}
+
+fn pack_into_buf(s: &str) -> *const u8 {
+    let len = (s.len() as u32).to_be_bytes();
+    let mut buf = len.to_vec();
+    buf.extend_from_slice(s.as_bytes());
+
+    let buf = buf.into_boxed_slice();
+    let buf_ptr = buf.as_ptr();
+
+    std::mem::forget(buf);
+    buf_ptr
+}
+
+#[no_mangle]
+pub extern "C" fn free_buf(ptr: *mut u8, len: usize) {
+    std::mem::drop(
+        unsafe { Box::from_raw(std::slice::from_raw_parts_mut(ptr, len)) }
+    );
+}
+
+#[no_mangle]
+pub extern "C" fn hash(ptr: *const u8, len: usize) -> *const u8 {
+    let params_buf = unsafe{ std::slice::from_raw_parts(ptr, len) };
+    
+    let result = match hash_internal(params_buf) {
         Ok(result) => {
-            buf[0] = 1;
-            Op::Sync(result.into_bytes().into_boxed_slice())
+            HashResult{
+                result: result.into_bytes(),
+                error: None,
+            }
         }
         Err(err) => {
-            error_handler(err, &mut buf);
-            Op::Sync(Box::new([]))
+            HashResult{
+                result: vec![],
+                error: Some(format!("{err}")),
+            }
         }
-    }
+    };
+
+    let result = serde_json::to_string(&result).expect("failed to json-strigify the result");
+
+    pack_into_buf(&result)
 }
 
-pub fn verify(_interface: &mut dyn Interface, buffs: &mut [ZeroCopyBuf]) -> Op {
-    let data = buffs[0].clone();
-    let mut buf = buffs[1].clone();
-    match verify_internal(&data) {
+
+#[no_mangle]
+pub extern "C" fn verify(ptr: *const u8, len: usize) -> *const u8 {
+    let params_buf = unsafe{ std::slice::from_raw_parts(ptr, len) };
+
+    let result = match verify_internal(params_buf) {
         Ok(result) => {
-            buf[0] = 1;
-            Op::Sync(Box::new([result as u8]))
+            VerifyResult{
+                result,
+                error: None,
+            }
         }
         Err(err) => {
-            error_handler(err, &mut buf);
-            Op::Sync(Box::new([]))
+            VerifyResult{
+                result: false,
+                error: Some(format!("{err}")),
+            }
         }
-    }
+    };
+
+    let result = serde_json::to_string(&result).expect("failed to json-strigify the result");
+
+    pack_into_buf(&result)
 }
 
-fn error_handler(err: Error, buf: &mut ZeroCopyBuf) {
-    buf[0] = 0;
-    let e = format!("{}", err);
-    let e = e.as_bytes();
-    for (index, byte) in e.iter().enumerate() {
-        buf[index + 1] = *byte;
-    }
-}
 
-fn hash_internal(data: &ZeroCopyBuf) -> Result<String, Error> {
-    let params: HashParams = serde_json::from_slice(data)?;
-    let salt = params.options.salt;
+fn hash_internal(params_buf: &[u8]) -> Result<String, Error> {
+    let params: HashParams = serde_json::from_slice(params_buf)?;
+    let salt = &params.options.salt;
 
     let mut config: Config = Config::default();
 
@@ -124,14 +165,14 @@ fn hash_internal(data: &ZeroCopyBuf) -> Result<String, Error> {
         }
     }
 
-    Ok(hash_encoded(&params.password.into_bytes(), &salt, &config)?)
+    Ok(hash_encoded(&params.password.into_bytes(), salt, &config)?)
 }
 
-fn verify_internal(data: &ZeroCopyBuf) -> Result<bool, Error> {
-    let options: VerifyParams = serde_json::from_slice(data)?;
+fn verify_internal(params_buf: &[u8]) -> Result<bool, Error> {
+    let options: VerifyParams = serde_json::from_slice(params_buf)?;
 
     Ok(verify_encoded(
         &options.hash,
-        &options.password.into_bytes(),
+        options.password.as_bytes(),
     )?)
 }

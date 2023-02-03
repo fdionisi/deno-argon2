@@ -18,7 +18,7 @@ impl fmt::Display for Error {
             Self::SerdeJson(err) => err.to_string(),
         };
 
-        write!(f, "{:?}: {}", self, msg)
+        write!(f, "{self:?}: {msg}")
     }
 }
 

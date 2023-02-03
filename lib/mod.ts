@@ -1,16 +1,8 @@
-import { HashOptions, version } from "./common.ts";
-import { installPlugin } from "./internal.ts";
+import { HashOptions } from "./common.ts";
+import * as internal from "./internal.ts";
 
 export * from "./common.ts";
 export * from "./error.ts";
-
-let plugin = await installPlugin(
-  `https://github.com/fdionisi/deno-argon2/releases/download/v${version()}`,
-  {
-    printLog: false,
-    checkCache: true,
-  },
-);
 
 /**
  * Hash a string.
@@ -56,7 +48,7 @@ export async function hash(
   password: string,
   options: Partial<HashOptions> = {},
 ) {
-  return plugin.hash(password, options);
+  return await internal.hash(password, options);
 }
 
 /**
@@ -68,5 +60,5 @@ export async function verify(
   hash: string,
   password: string,
 ) {
-  return plugin.verify(hash, password);
+  return await internal.verify(hash, password);
 }
