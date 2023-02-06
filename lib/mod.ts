@@ -44,11 +44,11 @@ export * from "./error.ts";
  * @param options.memoryCost Defines the memory usage, given in kibibytes. **Default**: 4096
  * @param options.timeCost The amount of computation realized and therefore the execution time, given in number of iterations. **Default**: 3
  */
-export async function hash(
+export function hash(
   password: string,
   options: Partial<HashOptions> = {},
 ) {
-  return await internal.hash(password, options);
+  return internal.hash(password, options);
 }
 
 /**
@@ -56,9 +56,9 @@ export async function hash(
  * @param hash
  * @param password
  */
-export async function verify(
+export function verify(
   hash: string,
   password: string,
 ) {
-  return await internal.verify(hash, password);
+  return internal.verify(hash, password);
 }
