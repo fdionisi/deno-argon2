@@ -14,23 +14,19 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v1
+        uses: actions/checkout@v3
 
-      - name: Install Rust
-        uses: hecrj/setup-rust-action@v1
+      - name: Install rust with rustfmt and clippy
+        uses: actions-rs/toolchain@v1
         with:
-          rust-version: "1.50.0"
-
-      - name: Install clippy and rustfmt
-        if: matrix.kind == 'lint'
-        run: |
-          rustup component add clippy
-          rustup component add rustfmt
+          profile: minimal
+          toolchain: stable
+          components: rustfmt, clippy
 
       - name: Install Deno
-        uses: denolib/setup-deno@master
+        uses: denoland/setup-deno@v1
         with:
-          deno-version: "1.8.3"
+          deno-version: "~1.30"
 
       - name: Log versions
         run: |
@@ -62,11 +58,11 @@ jobs:
 
       - name: Build
         if: matrix.kind == 'test'
-        run: cargo build --release --locked --all-targets
+        run: cargo build --release --locked 
 
       - name: Test TypeScript
         if: matrix.kind == 'test'
-        run: deno run --allow-read --allow-write --allow-plugin --allow-run --allow-env --unstable tests/run.ts
+        run: ./test-with-local-build.sh
 
       - name: Release
         uses: softprops/action-gh-release@v1
@@ -78,3 +74,7 @@ jobs:
             target/release/libdeno_argon2.dylib
             target/release/libdeno_argon2.so
             target/release/deno_argon2.dll
+
+      - name: After Release Test
+        if: matrix.kind == 'test' && startsWith(github.ref, 'refs/tags/')
+        run: deno test -A --unstable

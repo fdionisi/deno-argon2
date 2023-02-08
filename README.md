@@ -73,18 +73,18 @@ After install run `--help` to inspect all possible commands.
 
 ## Permissions
 
-The library automatically download the static library and initialize Deno plugin
-via [plugin_prepare](https://github.com/manyuanrong/deno-plugin-prepare) and it
-requires `--allow-read`, `--allow-write`, `--allow-net` and `--allow-plugin`.
+The library automatically downloads the static library and calls the static library's functions
+via FFI(Foreign Function Interface) API ([Deno: ffi docs](https://deno.land/manual@v1.30.0/runtime/ffi_api)) and it
+requires `--allow-read`, `--allow-write`, `--allow-net` and `--allow-ffi`.
 
 <details>
 
     ```sh
     deno \
-      --allow-read .deno_plugins \
-      --allow-write .deno_plugins \
+      --allow-read \
+      --allow-write \
       --allow-net \
-      --allow-plugin \
+      --allow-ffi \
       --unstable \
       lib/mod.ts
     ```

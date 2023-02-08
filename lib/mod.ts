@@ -1,16 +1,8 @@
-import { HashOptions, version } from "./common.ts";
-import { installPlugin } from "./internal.ts";
+import { HashOptions } from "./common.ts";
+import * as internal from "./internal.ts";
 
 export * from "./common.ts";
 export * from "./error.ts";
-
-let plugin = await installPlugin(
-  `https://github.com/fdionisi/deno-argon2/releases/download/v${version()}`,
-  {
-    printLog: false,
-    checkCache: true,
-  },
-);
 
 /**
  * Hash a string.
@@ -52,11 +44,11 @@ let plugin = await installPlugin(
  * @param options.memoryCost Defines the memory usage, given in kibibytes. **Default**: 4096
  * @param options.timeCost The amount of computation realized and therefore the execution time, given in number of iterations. **Default**: 3
  */
-export async function hash(
+export function hash(
   password: string,
   options: Partial<HashOptions> = {},
 ) {
-  return plugin.hash(password, options);
+  return internal.hash(password, options);
 }
 
 /**
@@ -64,9 +56,9 @@ export async function hash(
  * @param hash
  * @param password
  */
-export async function verify(
+export function verify(
   hash: string,
   password: string,
 ) {
-  return plugin.verify(hash, password);
+  return internal.verify(hash, password);
 }

@@ -4,7 +4,7 @@ import {
   assertThrowsAsync,
 } from "https://deno.land/std@0.92.0/testing/asserts.ts";
 
-import { hash, Variant, verify, Version } from "../lib/dev.ts";
+import { hash, Variant, verify, Version } from "../lib/mod.ts";
 
 let password =
   "2gnF!WAcyhp#kB@tcYQa2$A%P64jEmXY!@8n2GSH$GggfgGfP*qH!EWwDaB%5mdB6pW2fK!KD@YNjvqwREfRCCAPc54c5@Sk";
