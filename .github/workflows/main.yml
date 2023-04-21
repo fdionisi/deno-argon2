@@ -9,7 +9,7 @@ jobs:
     timeout-minutes: 60
     strategy:
       matrix:
-        os: [macOS-latest, windows-2019, ubuntu-latest]
+        os: [macOS-latest, windows-2019, ubuntu-20.04]
         kind: ["test", "lint"]
 
     steps:
