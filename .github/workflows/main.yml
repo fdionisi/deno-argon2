@@ -16,12 +16,8 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Install rust with rustfmt and clippy
-        uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: stable
-          components: rustfmt, clippy
+      - name: Install rust (stable)
+        run: curl https://sh.rustup.rs -sSf | sh -s -- -y
 
       - name: Install Deno
         uses: denoland/setup-deno@v1
